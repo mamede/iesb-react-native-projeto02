@@ -4,9 +4,9 @@ import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 // SCREENS
-import { Login } from "../screens/login";
-import { Home } from "../screens/home";
-import { Details } from "../screens/details";
+import { Login } from "../screens/Login";
+import { Home } from "../screens/Home";
+import { Details } from "../screens/Details";
 
 const Stack = createNativeStackNavigator();
 
