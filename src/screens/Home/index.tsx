@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigation } from "@react-navigation/native";
 
 // RN
 import {
@@ -19,16 +20,20 @@ import { styles } from "./Home.styles";
 // TYPES
 import { IData, IUser, IOwner } from "./Home.types";
 
+// CONFIG
+import { GITHUB_TOKEN } from "../../config/envs";
+
 function Home() {
   const [user, setUser] = useState<IUser>();
-  const [listRpos, setListRepos] = useState<IData[]>([]);
+  const [listRepos, setListRepos] = useState<IData[]>([]);
+  const navigation = useNavigation();
 
   const URL = "https://api.github.com";
   useEffect(() => {
     fetch(`${URL}/user`, {
       method: "GET",
       headers: {
-        Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
+        Authorization: `Bearer ${GITHUB_TOKEN}`,
       },
     })
       .then((response) => response.json())
@@ -46,7 +51,7 @@ function Home() {
     fetch(`${URL}/users/mamede/repos`, {
       method: "GET",
       headers: {
-        Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
+        Authorization: `Bearer ${GITHUB_TOKEN}`,
       },
     })
       .then((response) => response.json())
@@ -54,8 +59,17 @@ function Home() {
         console.log(`REPOSITORIOS: ${JSON.stringify(json)}`);
         setListRepos(json);
       });
+    navigation.navigate("Details", { data: listRepos });
   }, []);
 
+  const handleFilter = (name: string) => () => {
+    const listReposFilter = listRepos.filter((filter) => filter.name === name);
+    console.log(
+      "------------------------333333333333333--------------------------",
+      listReposFilter
+    );
+    navigation;
+  };
   return (
     <SafeAreaView style={{ flex: 1, marginTop: StatusBar.currentHeight || 0 }}>
       <View style={styles.imageView}>
@@ -63,13 +77,10 @@ function Home() {
         <Text style={{ fontSize: 24 }}>{user?.name}</Text>
         <Text style={{ fontSize: 18, fontWeight: "bold" }}>{user?.bio}</Text>
       </View>
-      <View style={{ padding: 8 }}>
-        <Text style={{ fontWeight: "bold", fontSize: 16 }}>Repositórios</Text>
-      </View>
       <FlatList
-        data={listRpos}
+        data={listRepos}
         renderItem={({ item, index }) => (
-          <TouchableOpacity>
+          <TouchableOpacity onPress={handleFilter(item.name)}>
             <View
               key={index}
               style={{ backgroundColor: "#FFF", marginTop: 8, padding: 8 }}
@@ -80,11 +91,13 @@ function Home() {
           </TouchableOpacity>
         )}
         keyExtractor={(item) => item.id}
-        // ListHeaderComponent={
-        //   <View style={{padding: 8}}>
-        //     <Text style={{fontWeight: 'bold', fontSize: 16}}>Repositórios</Text>
-        //   </View>
-        // }
+        ListHeaderComponent={
+          <View style={{ padding: 8 }}>
+            <Text style={{ fontWeight: "bold", fontSize: 16 }}>
+              Repositórios
+            </Text>
+          </View>
+        }
         ListEmptyComponent={<ActivityIndicator size={"large"} color={"red"} />}
       />
     </SafeAreaView>
