@@ -21,7 +21,7 @@ import { styles } from "./Home.styles";
 import { IData, IUser } from "../../shared/types/GithubInterfaces.types";
 
 // CONFIG
-import { GITHUB_TOKEN } from "../../config/envs";
+import { GITHUB_TOKEN, GITHUB_USER } from "../../config/envs";
 
 function Home() {
   const [user, setUser] = useState<IUser>();
@@ -52,7 +52,7 @@ function Home() {
 
   useEffect(() => {
     if (isFocused && listRepos.length === 0) {
-      fetch(`${URL}/users/mamede/repos`, {
+      fetch(`${URL}/users/${GITHUB_USER}/repos`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${GITHUB_TOKEN}`,
