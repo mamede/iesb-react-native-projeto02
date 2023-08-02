@@ -12,6 +12,10 @@ A aplicaçao permite listar seus repositorios no github e os seguidores do seu p
 ## 🔖 Layout
 
 Seguem os prints da aplicaçao funcionando:
+<div>
+<img src="https://user-images.githubusercontent.com/8690326/257669505-392acb51-c981-4695-a7ba-d6433a4d8cc4.png" alt="Tela Home" style="width: 200px;">
+<img src="https://user-images.githubusercontent.com/8690326/257669510-a2406415-a8d8-46a3-8083-7197f532f1ff.png" alt="Tela Details" style="width: 200px;">
+</div>
 
 ## Executando o projeto
 
