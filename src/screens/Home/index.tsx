@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigation } from "@react-navigation/native";
+import { useIsFocused, useNavigation } from "@react-navigation/native";
 
 // RN
 import {
@@ -18,7 +18,7 @@ import {
 import { styles } from "./Home.styles";
 
 // TYPES
-import { IData, IUser, IOwner } from "./Home.types";
+import { IData, IUser } from "../../shared/types/GithubInterfaces.types";
 
 // CONFIG
 import { GITHUB_TOKEN } from "../../config/envs";
@@ -27,49 +27,44 @@ function Home() {
   const [user, setUser] = useState<IUser>();
   const [listRepos, setListRepos] = useState<IData[]>([]);
   const navigation = useNavigation();
+  const isFocused = useIsFocused();
 
   const URL = "https://api.github.com";
   useEffect(() => {
-    fetch(`${URL}/user`, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${GITHUB_TOKEN}`,
-      },
-    })
-      .then((response) => response.json())
-      .then((json) => {
-        // console.log(`RESPOSTA: ${JSON.stringify(json)}`);
-        setUser(json);
+    if (isFocused && !user) {
+
+      fetch(`${URL}/user`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${GITHUB_TOKEN}`,
+        },
       })
-      .catch((e) => {
-        console.log(`Erro: ${e}`);
-        Alert.alert(`Erro: ${e}`);
-      });
-  });
+        .then((response) => response.json())
+        .then((json) => {
+          setUser(json);
+        })
+        .catch((e) => {
+          Alert.alert(`Erro: ${e}`);
+        });
+    }
+
+  }, [isFocused]);
 
   useEffect(() => {
-    fetch(`${URL}/users/mamede/repos`, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${GITHUB_TOKEN}`,
-      },
-    })
-      .then((response) => response.json())
-      .then((json) => {
-        console.log(`REPOSITORIOS: ${JSON.stringify(json)}`);
-        setListRepos(json);
-      });
-    navigation.navigate("Details", { data: listRepos });
-  }, []);
+    if (isFocused && listRepos.length === 0) {
+      fetch(`${URL}/users/mamede/repos`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${GITHUB_TOKEN}`,
+        },
+      })
+        .then((response) => response.json())
+        .then((json) => {
+          setListRepos(json);
+        });
+    }
+  }, [isFocused]);
 
-  const handleFilter = (name: string) => () => {
-    const listReposFilter = listRepos.filter((filter) => filter.name === name);
-    console.log(
-      "------------------------333333333333333--------------------------",
-      listReposFilter
-    );
-    navigation;
-  };
   return (
     <SafeAreaView style={{ flex: 1, marginTop: StatusBar.currentHeight || 0 }}>
       <View style={styles.imageView}>
@@ -80,7 +75,9 @@ function Home() {
       <FlatList
         data={listRepos}
         renderItem={({ item, index }) => (
-          <TouchableOpacity onPress={handleFilter(item.name)}>
+          <TouchableOpacity onPress={() => {
+            navigation.navigate("Details", { followersUrl: user?.followers_url });
+          }}>
             <View
               key={index}
               style={{ backgroundColor: "#FFF", marginTop: 8, padding: 8 }}
@@ -89,18 +86,19 @@ function Home() {
               <Text>{item.language || "Linguagem não encontrada"}</Text>
             </View>
           </TouchableOpacity>
-        )}
+        )
+        }
         keyExtractor={(item) => item.id}
         ListHeaderComponent={
-          <View style={{ padding: 8 }}>
+          < View style={{ padding: 8 }}>
             <Text style={{ fontWeight: "bold", fontSize: 16 }}>
               Repositórios
             </Text>
-          </View>
+          </View >
         }
-        ListEmptyComponent={<ActivityIndicator size={"large"} color={"red"} />}
+        ListEmptyComponent={< ActivityIndicator size={"large"} color={"red"} />}
       />
-    </SafeAreaView>
+    </SafeAreaView >
   );
 }
 

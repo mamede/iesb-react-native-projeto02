@@ -2,6 +2,7 @@ export interface IUser {
   avatar_url: string;
   name: string;
   bio: string;
+  followers_url: string;
 }
 
 export interface IOwner {
@@ -16,4 +17,9 @@ export interface IData {
   owner: IOwner;
   url: string;
   language: string;
+}
+
+export interface IFollowers {
+  login: string
+  avatar_url: string
 }

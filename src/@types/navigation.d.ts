@@ -3,7 +3,7 @@ export declare global {
     interface RootParamList {
       Home: undefined;
       Login: undefined;
-      Details: { data: any };
+      Details: { followersUrl: string | undefined };
     }
   }
 }
